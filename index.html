@@ -2,130 +2,159 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Be My Valentine 💘</title>
+<title>Valentine Pro 💘</title>
 
 <style>
-body {
-  margin:0;
-  height:100vh;
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(135deg,#ff758c,#ff7eb3);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-  transition:0.5s;
+body{
+margin:0;height:100vh;font-family:Segoe UI;
+display:flex;justify-content:center;align-items:center;
+background:linear-gradient(135deg,#ff758c,#ff7eb3);
+overflow:hidden;transition:.5s;
 }
-
-.dark {
-  background: linear-gradient(135deg,#1e1e1e,#3a3a3a);
-  color:white;
+.card{
+background:white;padding:30px;border-radius:20px;
+text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3);
+width:90%;max-width:430px;
 }
-
-.card {
-  background:white;
-  padding:35px;
-  border-radius:20px;
-  text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
-  max-width:420px;
-  width:90%;
+.dark{background:#1e1e1e;color:white;}
+.blue{background:linear-gradient(135deg,#2196f3,#00bcd4);}
+button{
+padding:12px 25px;font-size:16px;border-radius:10px;
+border:none;margin:8px;cursor:pointer;
 }
-
-.dark .card {
-  background:#2b2b2b;
-}
-
-h1 { font-size:28px; }
-
-button {
-  padding:15px 30px;
-  font-size:18px;
-  border-radius:12px;
-  border:none;
-  cursor:pointer;
-  margin:10px;
-}
-
-#yesBtn { background:#e91e63; color:white; }
-#noBtn { background:#9e9e9e; color:white; }
-#shareBtn { background:#25D366; color:white; }
-#darkBtn { background:#000; color:white; }
-
-.hidden { display:none; }
-
-#gif { width:250px; margin-top:15px; }
-
-.heart {
-  position:fixed;
-  color:red;
-  font-size:20px;
-  animation:float 4s linear;
-}
-
-@keyframes float {
-  to { transform: translateY(-100vh); opacity:0; }
-}
-
-@keyframes fall {
-  to { transform: translateY(100vh); }
-}
+#yesBtn{background:#e91e63;color:white;}
+#noBtn{background:#aaa;color:white;}
+#shareBtn{background:#25D366;color:white;}
+#qrBtn{background:#000;color:white;}
+#themeBtn{background:#673ab7;color:white;}
+.hidden{display:none;}
+#gif{width:220px;margin:10px;}
+.heart{position:fixed;font-size:20px;animation:float 4s linear;}
+@keyframes float{to{transform:translateY(-100vh);opacity:0}}
+@keyframes fall{to{transform:translateY(100vh)}}
 </style>
 </head>
 
 <body>
-
 <audio id="music" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
 </audio>
 
 <div class="card">
-  <h1 id="title">Will you be my Valentine? 💘</h1>
-  <p id="message">I promise chocolates and smiles 🍫😊</p>
+<h2 id="title">Will you be my Valentine? 💘</h2>
+<p id="countdown"></p>
+<p id="message">I promise chocolates 🍫</p>
 
-  <button id="yesBtn">Yes 💖</button>
-  <button id="noBtn">No 🙈</button>
+<button id="yesBtn">Yes 💖</button>
+<button id="noBtn">No 🙈</button>
 
-  <img id="gif" class="hidden"/>
+<img id="gif" class="hidden"/>
 
-  <button id="shareBtn" class="hidden">Share on WhatsApp 💌</button>
-  <button id="darkBtn">Dark Mode 🌙</button>
+<p id="stats"></p>
+
+<button id="shareBtn" class="hidden">Share 💌</button>
+<button id="qrBtn" class="hidden">QR Code 📱</button>
+<button id="themeBtn">Change Theme 🎨</button>
+
+<div id="qrcode"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
 <script>
-const yesBtn=document.getElementById("yesBtn");
-const noBtn=document.getElementById("noBtn");
+const yesBtn=noBtn=document.getElementById("noBtn");
+const yBtn=document.getElementById("yesBtn");
 const msg=document.getElementById("message");
 const title=document.getElementById("title");
 const gif=document.getElementById("gif");
 const shareBtn=document.getElementById("shareBtn");
+const qrBtn=document.getElementById("qrBtn");
+const themeBtn=document.getElementById("themeBtn");
 const music=document.getElementById("music");
-const darkBtn=document.getElementById("darkBtn");
+const stats=document.getElementById("stats");
+const qrcodeDiv=document.getElementById("qrcode");
 
 let noCount=0;
+let yesCount=localStorage.getItem("yesCount")||0;
 
-// NAME FROM URL
+stats.textContent="Yes clicks so far: "+yesCount;
+
 const params=new URLSearchParams(window.location.search);
 const name=params.get("name");
-if(name){
-  title.textContent=`Will you be my Valentine, ${name}? 💘`;
-}
+if(name) title.textContent=`Will you be my Valentine, ${name}? 💘`;
 
-// GIF LIST
 const gifs=[
- "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
- "https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif",
- "https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif",
- "https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif"
+"https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
+"https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif",
+"https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"
 ];
 
 function moveNo(){
- const x=Math.random()*(window.innerWidth-noBtn.offsetWidth);
- const y=Math.random()*(window.innerHeight-noBtn.offsetHeight);
- noBtn.style.position="absolute";
- noBtn.style.left=x+"px";
- noBtn.style.top=y+"px";
+const x=Math.random()*(window.innerWidth-noBtn.offsetWidth);
+const y=Math.random()*(window.innerHeight-noBtn.offsetHeight);
+noBtn.style.position="absolute";
+noBtn.style.left=x+"px";noBtn.style.top=y+"px";
 }
 
 noBtn.onclick=()=>{
- noCount
+noCount++;
+if(noCount===1){
+msg.textContent="Wrong choice 😤 Try again!";
+}else{
+moveNo();
+msg.textContent="You can’t escape love 💘😂";
+}
+};
+
+noBtn.onmouseenter=()=>{if(noCount>=2) moveNo();};
+
+yBtn.onclick=()=>{
+title.textContent="YAYYY 💘😍";
+msg.textContent="Best Valentine ever ❤️";
+yBtn.classList.add("hidden");
+noBtn.classList.add("hidden");
+gif.src=gifs[Math.floor(Math.random()*gifs.length)];
+gif.classList.remove("hidden");
+shareBtn.classList.remove("hidden");
+qrBtn.classList.remove("hidden");
+music.play();
+launchConfetti();startHearts();
+yesCount++;localStorage.setItem("yesCount",yesCount);
+stats.textContent="Yes clicks so far: "+yesCount;
+};
+
+shareBtn.onclick=()=>{
+window.open(`https://wa.me/?text=Someone has a Valentine question 😏💘 ${window.location.href}`);
+};
+
+qrBtn.onclick=()=>{
+qrcodeDiv.innerHTML="";
+new QRCode(qrcodeDiv,window.location.href);
+};
+
+let themes=["","dark","blue"];
+let themeIndex=0;
+themeBtn.onclick=()=>{
+themeIndex=(themeIndex+1)%themes.length;
+document.body.className=themes[themeIndex];
+};
+
+function launchConfetti(){
+for(let i=0;i<40;i++){
+const c=document.createElement("div");
+c.style.position="fixed";
+c.style.width="10px";c.style.height="10px";
+c.style.background="red";
+c.style.left=Math.random()*window.innerWidth+"px";
+c.style.top="-10px";
+c.style.animation="fall 3s linear";
+document.body.appendChild(c);
+setTimeout(()=>c.remove(),3000);
+}
+}
+
+function startHearts(){
+setInterval(()=>{
+const h=document.createElement("div");
+h.className="heart";h.textContent="❤️";
+h.style.left=Math.random()*window.innerWidth+"px";
