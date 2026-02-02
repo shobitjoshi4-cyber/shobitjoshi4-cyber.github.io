@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Do You Love Me?</title>
+  <title>Be My Valentine 💘</title>
   <style>
     body {
       margin: 0;
       height: 100vh;
       font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -21,156 +21,13 @@
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
       text-align: center;
-      max-width: 400px;
+      max-width: 420px;
       width: 90%;
     }
 
     h1 {
-      font-size: 32px;
+      font-size: 30px;
     }
 
     #message {
       font-size: 18px;
-      margin: 15px 0;
-      min-height: 30px;
-    }
-
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    #yesBtn {
-      background: #4caf50;
-      color: white;
-      margin-right: 20px;
-    }
-
-    #noBtn {
-      background: #f44336;
-      color: white;
-      position: absolute;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    #shareBtn {
-      margin-top: 20px;
-      background: #2196f3;
-      color: white;
-    }
-  </style>
-</head>
-<body>
-
-<div class="card" id="card">
-  <h1 id="title">Do you love me? ❤️</h1>
-  <p id="message">Babu ha bolo naaa...</p>
-
-  <button id="yesBtn">Yes</button>
-  <button id="noBtn">No</button>
-
-  <button id="shareBtn" class="hidden">Share this ❤️</button>
-</div>
-
-<script>
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-  const message = document.getElementById("message");
-  const title = document.getElementById("title");
-  const shareBtn = document.getElementById("shareBtn");
-
-  const messages = [
-    "Are you sure? 😏",
-    "Think again 😂",
-    "Don’t break my heart 💔",
-    "Last chance 😜",
-    "You can’t escape 😈",
-    "Just say yes already ❤️"
-  ];
-
-  let msgIndex = 0;
-
-  function moveNo() {
-    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-
-    message.textContent = messages[msgIndex % messages.length];
-    msgIndex++;
-  }
-
-  noBtn.addEventListener("mouseenter", moveNo);
-  noBtn.addEventListener("touchstart", moveNo);
-
-  yesBtn.addEventListener("click", () => {
-    title.textContent = "YAYYY ❤️😍";
-    message.textContent = "I love you tooooo!!!";
-    noBtn.classList.add("hidden");
-    yesBtn.classList.add("hidden");
-    shareBtn.classList.remove("hidden");
-    launchConfetti();
-  });
-
-  shareBtn.addEventListener("click", async () => {
-    const shareData = {
-      title: "Love Test ❤️",
-      text: "Try this cute love test 😜",
-      url: window.location.href
-    };
-
-    if (navigator.share) {
-      await navigator.share(shareData);
-    } else {
-      alert("Copy this link and send it:\n" + window.location.href);
-    }
-  });
-
-  // 🎉 Confetti
-  function launchConfetti() {
-    for (let i = 0; i < 50; i++) {
-      const confetti = document.createElement("div");
-      confetti.style.position = "fixed";
-      confetti.style.width = "10px";
-      confetti.style.height = "10px";
-      confetti.style.backgroundColor = randomColor();
-      confetti.style.left = Math.random() * window.innerWidth + "px";
-      confetti.style.top = "-10px";
-      confetti.style.opacity = 0.8;
-      confetti.style.borderRadius = "50%";
-      confetti.style.animation = "fall 3s linear";
-      document.body.appendChild(confetti);
-
-      setTimeout(() => confetti.remove(), 3000);
-    }
-  }
-
-  function randomColor() {
-    const colors = ["#ff1744", "#ff9100", "#00e5ff", "#76ff03", "#d500f9"];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-
-</script>
-
-<style>
-@keyframes fall {
-  to {
-    transform: translateY(100vh);
-  }
-}
-</style>
-
-</body>
-</html>
