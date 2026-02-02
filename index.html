@@ -18,7 +18,7 @@ transition:.5s;
 }
 
 .dark{
-background:#222;
+background:linear-gradient(135deg,#111,#333);
 color:white;
 }
 
@@ -29,12 +29,10 @@ border-radius:20px;
 text-align:center;
 box-shadow:0 10px 30px rgba(0,0,0,.3);
 width:90%;
-max-width:400px;
+max-width:420px;
 }
 
-.dark .card{
-background:#333;
-}
+.dark .card{background:#222;}
 
 button{
 padding:12px 25px;
@@ -46,22 +44,20 @@ cursor:pointer;
 transition:.2s;
 }
 
-button:hover{
-transform:scale(1.05);
-}
+button:hover{transform:scale(1.05);}
 
 #yesBtn{background:#ff1744;color:white;}
 #noBtn{background:#999;color:white;position:relative;}
 #themeBtn{background:#673ab7;color:white;}
 #shareBtn{background:#25D366;color:white;}
 
+.hidden{display:none;}
+
 #gif{
-width:200px;
+width:220px;
 margin-top:15px;
 border-radius:15px;
 }
-
-.hidden{display:none;}
 
 .heart{
 position:fixed;
@@ -69,7 +65,7 @@ font-size:22px;
 animation:float 4s linear;
 }
 
-.confetti{
+.confetti,.firework{
 position:fixed;
 width:10px;
 height:10px;
@@ -89,8 +85,18 @@ to{transform:translateY(100vh);}
 
 <body>
 
+<!-- Sounds -->
+<audio id="noSound">
+  <source src="https://www.soundjay.com/buttons/sounds/button-10.mp3">
+</audio>
+
+<audio id="music" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
 <div class="card">
-<h2 id="title">Will you be my Valentine? 💘</h2>
+<h2 id="title">Will you be my Valentine, Isha? 💘</h2>
+<p id="countdown"></p>
 <p id="message">Choose wisely 😏</p>
 
 <button id="yesBtn">Yes 💖</button>
@@ -111,15 +117,130 @@ const title=document.getElementById("title");
 const gif=document.getElementById("gif");
 const themeBtn=document.getElementById("themeBtn");
 const shareBtn=document.getElementById("shareBtn");
+const music=document.getElementById("music");
+const noSound=document.getElementById("noSound");
 
 let noCount=0;
 
-// Name from URL
+// Name from URL (default = Isha)
 const params=new URLSearchParams(window.location.search);
-const name=params.get("name");
-if(name){
-  title.textContent="Will you be my Valentine, "+name+"? 💘";
-}
+const name=params.get("name") || "Isha";
+title.textContent="Will you be my Valentine, "+name+"? 💘";
 
+// Countdown
+function updateCountdown(){
+  const now=new Date();
+  const valentine=new Date(now.getFullYear(),1,14);
+  const diff=valentine-now;
+  const days=Math.max(0,Math.floor(diff/(1000*60*60*24)));
+  document.getElementById("countdown").textContent=
+    days+" days to Valentine’s Day 💕";
+}
+updateCountdown();
+
+// GIF list
 const gifs=[
   "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
+  "https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif",
+  "https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif"
+];
+
+function moveNo(){
+  const x=Math.random()*(window.innerWidth-noBtn.offsetWidth);
+  const y=Math.random()*(window.innerHeight-noBtn.offsetHeight);
+  noBtn.style.position="absolute";
+  noBtn.style.left=x+"px";
+  noBtn.style.top=y+"px";
+}
+
+// Move when cursor near
+noBtn.addEventListener("mouseenter",()=>{
+  if(noCount>=1){
+    moveNo();
+  }
+});
+
+// Click No
+noBtn.addEventListener("click",()=>{
+  noSound.play();
+  noCount++;
+  if(noCount===1){
+    msg.textContent="Wrong answer 😤 Try again!";
+  } else {
+    moveNo();
+    msg.textContent="You can’t escape 😂";
+  }
+});
+
+// Yes button
+yesBtn.addEventListener("click",()=>{
+  title.textContent="YAYYY 💘😍";
+  msg.textContent="Best Valentine ever ❤️";
+  yesBtn.classList.add("hidden");
+  noBtn.classList.add("hidden");
+
+  gif.src=gifs[Math.floor(Math.random()*gifs.length)];
+  gif.classList.remove("hidden");
+
+  shareBtn.classList.remove("hidden");
+
+  music.play();
+  launchConfetti();
+  startHearts();
+  fireworks();
+});
+
+// Theme toggle
+themeBtn.addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+});
+
+// Share
+shareBtn.addEventListener("click",()=>{
+  window.open("https://wa.me/?text=Someone has a Valentine question 💘 "+window.location.href);
+});
+
+function launchConfetti(){
+  for(let i=0;i<30;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.background=randomColor();
+    c.style.left=Math.random()*window.innerWidth+"px";
+    c.style.top="-10px";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+}
+
+function fireworks(){
+  for(let i=0;i<30;i++){
+    const f=document.createElement("div");
+    f.className="firework";
+    f.style.background=randomColor();
+    f.style.left=(window.innerWidth/2)+"px";
+    f.style.top=(window.innerHeight/2)+"px";
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),3000);
+  }
+}
+
+function startHearts(){
+  setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.textContent="❤️";
+    h.style.left=Math.random()*window.innerWidth+"px";
+    h.style.bottom="0";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  },400);
+}
+
+function randomColor(){
+  const colors=["#ff1744","#ff4081","#f50057","#d81b60"];
+  return colors[Math.floor(Math.random()*colors.length)];
+}
+</script>
+
+</body>
+</html>
